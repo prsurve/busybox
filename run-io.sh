@@ -14,8 +14,12 @@ run_io()
         break
     else
         echo "Running io space is sufficent"
-        dd if=/dev/urandom of=/mnt/test/$(date +"%d-%m-%Y_%H-%M-%S") bs=20M count=1
+        file=$(date +"%d-%m-%Y_%H-%M-%S")
+        dd if=/dev/urandom of=/mnt/test/$file bs=20M count=1
         sync
+        md5sum_data=$(md5sum /mnt/test/$file | awk '{print$1}')
+        python3 /write_metadata.py --metadata_file_name metadata.json --key $file --value $md5sum_data
+        
     fi
     done
 }
