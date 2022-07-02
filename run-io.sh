@@ -7,6 +7,7 @@ run_io()
     echo $output
     usep=$(echo $output | awk '{ print $1}' | cut -d'%' -f1  )
     partition=$(echo $output | awk '{ print $2 }' )
+    hashfile=/mnt/test/hashfile
     if [ $usep -ge 90 ]; then
         echo "Running out of space \"$partition ($usep%)\" on $(hostname) as on $(date)"
         echo "Alert: Almost out of disk space $usep%"
@@ -19,7 +20,8 @@ run_io()
         dd if=/dev/urandom of=/mnt/test/$file bs=20M count=1
         sync
         md5sum_data=$(md5sum /mnt/test/$file | awk '{print$1}')
-        python3 /write_metadata.py --metadata_file_name metadata.json --key $file --value $md5sum_data
+        md5sum /mnt/test/$file >>$hashfile       
+        python3 /home/prsurve/busybox/write_metadata.py --metadata_file_name metadata.json --key $file --value $md5sum_data
         
     fi
     done
@@ -32,5 +34,11 @@ while true; do
     run_io
 
     # Do the above every 5 minutes 
-    sleep 300
+    sleep 294
+    hashfile=/mnt/test/hashfile
+    if [ $(($RANDOM%2)) == 1 ]
+        then
+            md5sum -c --quiet $hashfile
+    fi
+    sleep 5
 done
