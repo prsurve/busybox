@@ -21,7 +21,7 @@ run_io()
         sync
         md5sum_data=$(md5sum /mnt/test/$file | awk '{print$1}')
         md5sum /mnt/test/$file >>$hashfile       
-        python3 /home/prsurve/busybox/write_metadata.py --metadata_file_name metadata.json --key $file --value $md5sum_data
+        python3 /write_metadata.py --metadata_file_name metadata.json --key $file --value $md5sum_data
         
     fi
     done
