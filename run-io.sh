@@ -17,7 +17,7 @@ run_io()
         echo "Running io space is sufficent"
         hostname=$(hostname -f)
         file=$(date +"%d-%m-%Y_%H-%M-%S"-$hostname)
-        dd if=/dev/urandom of=/mnt/test/$file bs=20M count=1
+        dd if=/dev/urandom of=/mnt/test/$file bs=20M count=4
         sync
         md5sum_data=$(md5sum /mnt/test/$file | awk '{print$1}')
         md5sum /mnt/test/$file >>$hashfile       
@@ -34,7 +34,7 @@ while true; do
     run_io
 
     # Do the above every 5 minutes 
-    sleep 294
+    sleep 100
     hashfile=/mnt/test/hashfile
     if [ $(($RANDOM%2)) == 1 ]
         then
